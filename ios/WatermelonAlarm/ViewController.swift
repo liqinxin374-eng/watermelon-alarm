@@ -38,7 +38,7 @@ class ViewController: UIViewController, WKScriptMessageHandler {
     }
 
     func startAlarmAudio() {
-        if let soundUrl = Bundle.main.url(forResource: "alarm", withExtension: "wav") {
+        if audioPlayer == nil, let soundUrl = Bundle.main.url(forResource: "alarm", withExtension: "wav") {
             do {
                 audioPlayer = try AVAudioPlayer(contentsOf: soundUrl)
                 audioPlayer?.numberOfLoops = -1
@@ -50,7 +50,7 @@ class ViewController: UIViewController, WKScriptMessageHandler {
         }
         
         vibrateTimer?.invalidate()
-        vibrateTimer = Timer.scheduledTimer(withTimeInterval: 0.8, repeats: true) { _ in
+        vibrateTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
             AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
         }
     }
@@ -61,9 +61,10 @@ class ViewController: UIViewController, WKScriptMessageHandler {
         vibrateTimer?.invalidate()
         vibrateTimer = nil
         
-        // 清理所有关联的锁屏连环响铃通知
+        // 彻底清空所有残留锁屏通知与角标
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+        UIApplication.shared.applicationIconBadgeNumber = 0
         
         let js = "if (typeof dismissAlarm === 'function') { dismissAlarm(); }"
         webView.evaluateJavaScript(js, completionHandler: nil)
@@ -78,40 +79,30 @@ class ViewController: UIViewController, WKScriptMessageHandler {
                   let timestamp = body["timestamp"] as? Double,
                   let label = body["label"] as? String else { return }
             
-            // 先清理旧的同名通知序列
-            var cancelIds: [String] = [id]
-            for i in 0..<5 { cancelIds.append("\(id)_\(i)") }
-            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: cancelIds)
+            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [id])
             
-            let baseDate = Date(timeIntervalSince1970: timestamp / 1000.0)
+            let fireDate = Date(timeIntervalSince1970: timestamp / 1000.0)
+            guard fireDate.timeIntervalSinceNow > 0 else { return }
             
-            // 采用 iOS 连环脉冲通知架构（每隔 15 秒触发一次高音响铃与振动，共持续 1 分多钟）
-            for i in 0..<5 {
-                let fireDate = baseDate.addingTimeInterval(Double(i * 15))
-                guard fireDate.timeIntervalSinceNow > 0 else { continue }
-                
-                let content = UNMutableNotificationContent()
-                content.title = "⏰ 西瓜闹钟 · 正在响铃！"
-                content.body = "\(label) · 请起床/开始行动！"
-                content.sound = UNNotificationSound(named: UNNotificationSoundName("alarm.wav"))
-                content.categoryIdentifier = "ALARM_CATEGORY"
-                
-                if #available(iOS 15.0, *) {
-                    content.interruptionLevel = .timeSensitive
-                }
-                
-                let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: fireDate)
-                let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)
-                
-                let reqId = "\(id)_\(i)"
-                let req = UNNotificationRequest(identifier: reqId, content: content, trigger: trigger)
-                UNUserNotificationCenter.current().add(req, withCompletionHandler: nil)
+            let content = UNMutableNotificationContent()
+            content.title = "⏰ 西瓜闹钟 · 正在响铃！"
+            content.body = "\(label) · 请起床/开始行动！"
+            content.sound = UNNotificationSound(named: UNNotificationSoundName("alarm.wav"))
+            content.categoryIdentifier = "ALARM_CATEGORY"
+            
+            if #available(iOS 15.0, *) {
+                content.interruptionLevel = .timeSensitive
             }
+            
+            let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: fireDate)
+            let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)
+            
+            let req = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
+            UNUserNotificationCenter.current().add(req, withCompletionHandler: nil)
+            
         } else if action == "cancelAlarm" {
             if let id = body["id"] as? String {
-                var cancelIds: [String] = [id]
-                for i in 0..<5 { cancelIds.append("\(id)_\(i)") }
-                UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: cancelIds)
+                UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [id])
             }
         } else if action == "stopRing" {
             stopAlarmAudio()

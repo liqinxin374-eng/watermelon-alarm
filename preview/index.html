@@ -45,7 +45,6 @@
       padding-bottom: env(safe-area-inset-bottom, 12px);
       position: relative;
       background: var(--bg);
-      box-shadow: 0 0 40px rgba(0,0,0,0.05);
     }
 
     /* 视图通用容器 */
@@ -164,7 +163,7 @@
     .fab-btn {
       position: fixed;
       bottom: max(24px, env(safe-area-inset-bottom, 16px) + 16px);
-      right: calc(50% - 250px);
+      right: 20px;
       background: var(--primary);
       color: #fff;
       padding: 14px 22px;
@@ -179,9 +178,6 @@
       gap: 6px;
       z-index: 40;
       transition: transform 0.15s;
-    }
-    @media (max-width: 560px) {
-      .fab-btn { right: 20px; }
     }
     .fab-btn:active { transform: scale(0.95); }
 
@@ -638,7 +634,7 @@
     }
   }
 
-  // --- 音效发生器 ---
+  // --- 音效发生器与停止处理 ---
   let audioCtx = null;
   let audioTimer = null;
   function playRingtone() {
@@ -662,9 +658,15 @@
       audioTimer = setInterval(playBeep, 900);
     } catch(e) {}
   }
+
   function stopRingtone() {
     if (audioTimer) { clearInterval(audioTimer); audioTimer = null; }
-    if (window.AndroidAlarm) window.AndroidAlarm.stopRing();
+    if (window.AndroidAlarm) {
+      window.AndroidAlarm.stopRing();
+    }
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.iOSAlarm) {
+      window.webkit.messageHandlers.iOSAlarm.postMessage({ action: 'stopRing' });
+    }
   }
 
   // --- UI 初始化与渲染 ---
