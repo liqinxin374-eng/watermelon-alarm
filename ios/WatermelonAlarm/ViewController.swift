@@ -11,7 +11,6 @@ class ViewController: UIViewController, WKScriptMessageHandler {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         view.backgroundColor = UIColor(red: 248/255, green: 250/255, blue: 252/255, alpha: 1)
         
         let config = WKWebViewConfiguration()
@@ -50,10 +49,9 @@ class ViewController: UIViewController, WKScriptMessageHandler {
             }
         }
         
-        // 开启循环振动反馈
         vibrateTimer?.invalidate()
         vibrateTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+            AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
         }
     }
 
@@ -81,16 +79,12 @@ class ViewController: UIViewController, WKScriptMessageHandler {
             content.sound = UNNotificationSound(named: UNNotificationSoundName("default.wav"))
             content.categoryIdentifier = "ALARM_CATEGORY"
             
-            if #available(iOS 15.0, *) {
-                content.interruptionLevel = .timeSensitive
-            }
-            
             let fireDate = Date(timeIntervalSince1970: timestamp / 1000.0)
             let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: fireDate)
             let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)
             
             let req = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
-            UNUserNotificationCenter.current().add(req)
+            UNUserNotificationCenter.current().add(req, withCompletionHandler: nil)
         } else if action == "cancelAlarm" {
             if let id = body["id"] as? String {
                 UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [id])
