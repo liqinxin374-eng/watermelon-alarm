@@ -1,7 +1,7 @@
-name: 🍉 西瓜闹钟 · 云端一键出包 (Android + iOS)
+name: 🍉 西瓜闹钟 · 云端一键出包 (Android APK + iOS IPA)
 
 on:
-  workflow_dispatch: # 支持在 GitHub 网页上点击按钮手动触发
+  workflow_dispatch:
   push:
     branches: [ main, master ]
     tags: [ 'v*' ]
@@ -33,33 +33,51 @@ jobs:
           mkdir -p output_apk
           cp android/app/build/outputs/apk/debug/app-debug.apk output_apk/西瓜闹钟_v1.0.0.apk
 
-      - name: 📤 上传 Android APK (供直接下载安装)
+      - name: 📤 上传 Android APK (供手机直接安装)
         uses: actions/upload-artifact@v4
         with:
-          name: 西瓜闹钟_Android_APK
+          name: 西瓜闹钟_Android_APK安装包
           path: output_apk/西瓜闹钟_v1.0.0.apk
           retention-days: 30
 
   build-ios:
-    name: 🍏 编译生成 iOS 产物包
+    name: 🍏 编译生成 iOS IPA 安装包 (适配爱思助手/AltStore)
     runs-on: macos-latest
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
 
-      - name: 配置 Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: 打包 iOS 原生工程与静态资源
+      - name: 创建 App 目录结构
         run: |
-          mkdir -p output_ios
-          zip -r output_ios/西瓜闹钟_iOS_NativeBundle.zip ios/ preview/ src/ package.json README.md
+          mkdir -p build/Payload/WatermelonAlarm.app
+          mkdir -p output_ipa
 
-      - name: 📤 上传 iOS 产物
+      - name: 使用 SwiftC 针对 ARM64 编译 iOS 原生二进制
+        run: |
+          xcrun -sdk iphoneos swiftc \
+            -target arm64-apple-ios14.0 \
+            -parse-as-library \
+            ios/WatermelonAlarm/AppDelegate.swift \
+            ios/WatermelonAlarm/ViewController.swift \
+            -o build/Payload/WatermelonAlarm.app/WatermelonAlarm \
+            -framework UIKit \
+            -framework WebKit \
+            -framework UserNotifications
+
+      - name: 注入 App 描述配置与静态资源
+        run: |
+          cp ios/WatermelonAlarm/Info.plist build/Payload/WatermelonAlarm.app/
+          cp ios/AlarmBridge/default.wav build/Payload/WatermelonAlarm.app/
+          cp preview/index.html build/Payload/WatermelonAlarm.app/
+
+      - name: 打包生成标准的 .ipa 文件
+        run: |
+          cd build
+          zip -qr ../output_ipa/西瓜闹钟_v1.0.0.ipa Payload/
+
+      - name: 📤 上传 iOS IPA 安装包 (供爱思助手直接签名安装)
         uses: actions/upload-artifact@v4
         with:
-          name: 西瓜闹钟_iOS_产物包
-          path: output_ios/
+          name: 西瓜闹钟_iOS_IPA安装包
+          path: output_ipa/西瓜闹钟_v1.0.0.ipa
           retention-days: 30
