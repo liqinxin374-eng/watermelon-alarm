@@ -2,13 +2,13 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>西瓜闹钟 🍉 · 本地交互预览</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>西瓜闹钟 🍉</title>
   <style>
     :root {
       --primary: #2563eb;
       --primary-hover: #1d4ed8;
-      --bg: #f1f5f9;
+      --bg: #f8fafc;
       --card: #ffffff;
       --text: #0f172a;
       --sub: #64748b;
@@ -17,79 +17,54 @@
       --danger-hover: #dc2626;
       --dark-bg: #0f172a;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background: #0b0f19; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; color: #fff; }
-    
-    .container { display: flex; flex-direction: row; gap: 30px; align-items: flex-start; max-width: 1050px; width: 100%; }
-    @media (max-width: 860px) {
-      .container { flex-direction: column; align-items: center; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
     }
-
-    /* 手机外壳容器 */
-    .phone-mockup {
-      width: 390px;
-      height: 820px;
-      background: #000;
-      border-radius: 48px;
-      padding: 12px;
-      box-shadow: 0 25px 60px -15px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.1);
-      position: relative;
-      flex-shrink: 0;
-    }
-    .phone-screen {
+    html, body {
       width: 100%;
       height: 100%;
       background: var(--bg);
-      border-radius: 38px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      position: relative;
       color: var(--text);
+      overflow: hidden;
     }
     
-    /* 顶部状态栏与刘海 */
-    .status-bar {
-      height: 44px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 24px;
-      font-size: 14px;
-      font-weight: 600;
-      z-index: 10;
-      background: transparent;
-    }
-    .notch {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 120px;
-      height: 28px;
-      background: #000;
-      border-bottom-left-radius: 18px;
-      border-bottom-right-radius: 18px;
-      z-index: 20;
-    }
-
-    /* 视图容器 */
-    .view-content {
-      flex: 1;
-      overflow-y: auto;
+    .app-viewport {
+      width: 100%;
+      height: 100%;
       display: flex;
       flex-direction: column;
+      padding-top: env(safe-area-inset-top, 12px);
+      padding-bottom: env(safe-area-inset-bottom, 12px);
+      padding-left: env(safe-area-inset-left, 0);
+      padding-right: env(safe-area-inset-right, 0);
       position: relative;
     }
 
-    /* 列表页 */
+    /* 视图通用容器 */
+    .view-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      position: relative;
+    }
+
+    /* 列表页头部 */
     .list-header {
-      padding: 16px 20px 10px;
+      padding: 16px 20px 8px;
     }
     .list-header h1 {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 800;
       color: var(--text);
+      letter-spacing: -0.5px;
     }
     .list-header p {
       font-size: 13px;
@@ -97,29 +72,30 @@
       margin-top: 4px;
     }
 
+    /* 闹钟列表 */
     .alarm-list {
-      padding: 10px 16px;
+      padding: 10px 16px 90px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
     }
     .alarm-card {
       background: var(--card);
-      border-radius: 16px;
-      padding: 16px 18px;
+      border-radius: 20px;
+      padding: 18px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.02);
       cursor: pointer;
       transition: transform 0.15s, box-shadow 0.15s;
     }
     .alarm-card:active { transform: scale(0.98); }
     .alarm-info { flex: 1; }
     .alarm-time {
-      font-size: 32px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -1px;
       color: var(--text);
       line-height: 1;
     }
@@ -127,20 +103,20 @@
       color: #94a3b8;
     }
     .alarm-label {
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       margin-top: 6px;
     }
     .alarm-meta {
       display: flex;
       align-items: center;
-      gap: 6px;
-      margin-top: 6px;
+      gap: 8px;
+      margin-top: 8px;
       flex-wrap: wrap;
     }
     .tag {
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
       padding: 3px 8px;
       border-radius: 6px;
       background: #e0f2fe;
@@ -151,17 +127,17 @@
     .tag-month { background: #f3e8ff; color: #7e22ce; }
     .tag-year { background: #fce7f3; color: #be185d; }
     .next-trigger-hint {
-      font-size: 11px;
-      color: #10b981;
-      font-weight: 500;
+      font-size: 12px;
+      color: #059669;
+      font-weight: 600;
     }
 
     /* Switch 开关 */
     .switch {
       position: relative;
       display: inline-block;
-      width: 50px;
-      height: 28px;
+      width: 52px;
+      height: 30px;
       flex-shrink: 0;
     }
     .switch input { opacity: 0; width: 0; height: 0; }
@@ -169,63 +145,65 @@
       position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
       background-color: #cbd5e1;
       transition: .25s;
-      border-radius: 28px;
+      border-radius: 30px;
     }
     .slider:before {
       position: absolute; content: "";
-      height: 22px; width: 22px; left: 3px; bottom: 3px;
+      height: 24px; width: 24px; left: 3px; bottom: 3px;
       background-color: white;
       transition: .25s;
       border-radius: 50%;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.25);
     }
     input:checked + .slider { background-color: var(--primary); }
     input:checked + .slider:before { transform: translateX(22px); }
 
     /* 悬浮新建按钮 */
     .fab-btn {
-      position: absolute;
-      bottom: 24px;
-      right: 24px;
+      position: fixed;
+      bottom: max(24px, env(safe-area-inset-bottom, 16px) + 16px);
+      right: 20px;
       background: var(--primary);
       color: #fff;
-      padding: 14px 20px;
-      border-radius: 30px;
+      padding: 14px 22px;
+      border-radius: 32px;
       border: none;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
-      box-shadow: 0 8px 20px rgba(37,99,235,0.35);
+      box-shadow: 0 8px 24px rgba(37,99,235,0.4);
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 6px;
+      z-index: 40;
       transition: transform 0.15s;
     }
-    .fab-btn:hover { background: var(--primary-hover); transform: translateY(-2px); }
+    .fab-btn:active { transform: scale(0.95); }
 
     /* 编辑器页面 */
     .editor-view {
-      padding: 16px 20px 40px;
+      padding: 16px 20px 60px;
+      background: var(--bg);
     }
     .editor-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
-    .editor-header h2 { font-size: 20px; font-weight: 700; }
-    .btn-text { background: none; border: none; font-size: 15px; font-weight: 600; color: var(--primary); cursor: pointer; }
+    .editor-header h2 { font-size: 20px; font-weight: 800; }
+    .btn-text { background: none; border: none; font-size: 16px; font-weight: 700; color: var(--primary); cursor: pointer; padding: 4px 8px; }
     .btn-cancel { color: var(--sub); }
 
-    .form-group { margin-bottom: 18px; }
-    .form-label { font-size: 13px; font-weight: 700; color: var(--sub); margin-bottom: 6px; display: block; }
+    .form-group { margin-bottom: 20px; }
+    .form-label { font-size: 13px; font-weight: 700; color: var(--sub); margin-bottom: 8px; display: block; }
     .form-input {
       width: 100%;
       background: #fff;
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 14px;
-      font-size: 15px;
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 16px;
       color: var(--text);
       outline: none;
     }
@@ -236,22 +214,22 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
+      gap: 16px;
       background: #fff;
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
+      border-radius: 18px;
+      padding: 18px;
     }
     .time-select-wrap {
       display: flex;
       align-items: center;
       background: #f8fafc;
       border: 1.5px solid var(--border);
-      border-radius: 12px;
-      padding: 4px 10px;
+      border-radius: 14px;
+      padding: 6px 14px;
     }
     .time-select-wrap select {
-      font-size: 32px;
+      font-size: 36px;
       font-weight: 800;
       color: var(--text);
       border: none;
@@ -259,33 +237,33 @@
       outline: none;
       cursor: pointer;
       text-align: center;
-      padding: 4px;
+      padding: 2px;
     }
     .time-select-wrap select option {
       font-size: 16px;
       font-weight: 600;
     }
     .time-unit-label {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--sub);
-      margin-left: 2px;
+      margin-left: 4px;
     }
-    .time-colon { font-size: 32px; font-weight: 800; color: var(--sub); }
+    .time-colon { font-size: 36px; font-weight: 800; color: var(--sub); }
 
     /* 周期网格 */
     .chip-grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 10px;
     }
     .chip {
-      padding: 8px 14px;
-      border-radius: 20px;
+      padding: 10px 16px;
+      border-radius: 24px;
       background: #e2e8f0;
       border: none;
-      font-size: 13px;
-      font-weight: 600;
+      font-size: 14px;
+      font-weight: 700;
       color: #334155;
       cursor: pointer;
       transition: .15s;
@@ -296,9 +274,9 @@
     .mode-card {
       background: #fff;
       border: 1.5px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 14px;
-      margin-top: 8px;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-top: 10px;
       cursor: pointer;
       transition: .15s;
     }
@@ -306,16 +284,16 @@
       border-color: var(--primary);
       background: #eff6ff;
     }
-    .mode-card-title { font-size: 14px; font-weight: 700; color: #1e293b; }
+    .mode-card-title { font-size: 15px; font-weight: 700; color: #1e293b; }
     .mode-card.active .mode-card-title { color: var(--primary); }
-    .mode-card-desc { font-size: 11px; color: #64748b; margin-top: 3px; }
+    .mode-card-desc { font-size: 12px; color: #64748b; margin-top: 4px; }
     .mode-card.active .mode-card-desc { color: #3b82f6; }
 
     /* 星期选择 */
-    .week-row { display: flex; justify-content: space-between; margin-top: 8px; }
+    .week-row { display: flex; justify-content: space-between; margin-top: 10px; }
     .week-btn {
-      width: 36px; height: 36px; border-radius: 50%;
-      border: none; background: #e2e8f0; font-size: 13px; font-weight: 700;
+      width: 42px; height: 42px; border-radius: 50%;
+      border: none; background: #e2e8f0; font-size: 14px; font-weight: 700;
       color: #475569; cursor: pointer;
     }
     .week-btn.active { background: var(--primary); color: #fff; }
@@ -324,19 +302,19 @@
     .custom-select-row {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       background: #fff;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 14px;
+      border-radius: 14px;
+      padding: 12px 16px;
     }
     .custom-select {
       flex: 1;
-      padding: 8px 12px;
+      padding: 10px 14px;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 600;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
       color: var(--text);
       background: #f8fafc;
       outline: none;
@@ -345,7 +323,7 @@
 
     /* 响铃全屏界面 */
     .ring-screen {
-      position: absolute;
+      position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: var(--dark-bg);
       z-index: 100;
@@ -353,7 +331,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 30px;
+      padding: 30px 24px;
       color: #fff;
       text-align: center;
       animation: fadeIn .25s ease;
@@ -361,9 +339,9 @@
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     .bell-animation {
-      font-size: 72px;
+      font-size: 80px;
       animation: bellPulse 1.2s infinite ease-in-out;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
     @keyframes bellPulse {
       0%, 100% { transform: scale(1) rotate(0deg); }
@@ -372,249 +350,142 @@
       60% { transform: scale(1.15) rotate(-10deg); }
       80% { transform: scale(1.15) rotate(10deg); }
     }
-    .ring-time { font-size: 56px; font-weight: 800; letter-spacing: -1px; }
-    .ring-title { font-size: 22px; font-weight: 700; margin-top: 8px; color: #e2e8f0; }
-    .ring-sub { font-size: 14px; color: #94a3b8; margin-top: 4px; }
+    .ring-time { font-size: 64px; font-weight: 900; letter-spacing: -2px; }
+    .ring-title { font-size: 24px; font-weight: 800; margin-top: 8px; color: #e2e8f0; }
+    .ring-sub { font-size: 15px; color: #94a3b8; margin-top: 6px; }
     
-    .ring-actions { width: 100%; margin-top: 48px; display: flex; flex-direction: column; gap: 14px; }
+    .ring-actions { width: 100%; max-width: 320px; margin-top: 56px; display: flex; flex-direction: column; gap: 16px; }
     .btn-stop {
       width: 100%;
       background: var(--danger);
       color: #fff;
-      padding: 16px;
-      border-radius: 30px;
+      padding: 18px;
+      border-radius: 36px;
       border: none;
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 800;
       cursor: pointer;
       box-shadow: 0 10px 25px rgba(239,68,68,0.4);
     }
-    .btn-stop:hover { background: var(--danger-hover); }
+    .btn-stop:active { background: var(--danger-hover); transform: scale(0.98); }
     .btn-snooze {
       width: 100%;
       background: transparent;
       border: 1px solid #475569;
       color: #cbd5e1;
-      padding: 14px;
-      border-radius: 30px;
-      font-size: 15px;
-      font-weight: 600;
+      padding: 16px;
+      border-radius: 36px;
+      font-size: 16px;
+      font-weight: 700;
       cursor: pointer;
     }
-
-    /* 右侧控制台面板 */
-    .control-panel {
-      flex: 1;
-      background: #1e293b;
-      border-radius: 24px;
-      padding: 24px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .panel-header h3 { font-size: 20px; font-weight: 700; color: #f8fafc; }
-    .panel-header p { font-size: 13px; color: #94a3b8; margin-top: 4px; }
-    
-    .status-card {
-      background: #0f172a;
-      border-radius: 14px;
-      padding: 14px 16px;
-      border: 1px solid #334155;
-      font-size: 13px;
-    }
-    .status-item { display: flex; justify-content: space-between; margin-bottom: 8px; }
-    .status-item:last-child { margin-bottom: 0; }
-    .status-label { color: #94a3b8; }
-    .status-value { color: #38bdf8; font-weight: 600; }
-    .badge-ok { background: #065f46; color: #34d399; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
-
-    .test-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .test-btn {
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid #475569;
-      background: #334155;
-      color: #fff;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: .15s;
-    }
-    .test-btn:hover { background: #475569; }
-    .test-btn.primary { background: #2563eb; border-color: #2563eb; }
-    .test-btn.primary:hover { background: #1d4ed8; }
-
-    .log-box {
-      background: #0f172a;
-      border-radius: 10px;
-      padding: 12px;
-      font-family: monospace;
-      font-size: 12px;
-      color: #a5b4fc;
-      height: 200px;
-      overflow-y: auto;
-      border: 1px solid #334155;
-    }
-    .log-item { margin-bottom: 4px; line-height: 1.4; }
+    .btn-snooze:active { background: rgba(255,255,255,0.05); }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <!-- 手机模拟器 -->
-  <div class="phone-mockup">
-    <div class="notch"></div>
-    <div class="phone-screen">
-      <!-- 状态栏 -->
-      <div class="status-bar" id="statusBar">
-        <span id="currentClock">09:41</span>
-        <span>📶 5G 🔋 100%</span>
+<div class="app-viewport">
+  <!-- 视图1：闹钟列表 -->
+  <div id="viewList" class="view-content">
+    <div class="list-header">
+      <h1>西瓜闹钟 🍉</h1>
+      <p id="alarmSummary">已开启 3 个闹钟 · 智能调休已就绪</p>
+    </div>
+    <div class="alarm-list" id="alarmListContainer"></div>
+    <button class="fab-btn" onclick="openEditor(null)">+ 新建闹钟</button>
+  </div>
+
+  <!-- 视图2：编辑/新建闹钟 -->
+  <div id="viewEditor" class="view-content" style="display: none;">
+    <div class="editor-view">
+      <div class="editor-header">
+        <button class="btn-text btn-cancel" onclick="closeEditor()">取消</button>
+        <h2 id="editorTitle">编辑闹钟</h2>
+        <button class="btn-text" onclick="saveAlarm()">保存</button>
       </div>
 
-      <!-- 视图1：闹钟列表 -->
-      <div id="viewList" class="view-content">
-        <div class="list-header">
-          <h1>西瓜闹钟 🍉</h1>
-          <p id="alarmSummary">已开启 2 个闹钟 · 智能调休已就绪</p>
-        </div>
-        <div class="alarm-list" id="alarmListContainer"></div>
-        <button class="fab-btn" onclick="openEditor(null)">+ 新建闹钟</button>
-      </div>
-
-      <!-- 视图2：编辑/新建闹钟 -->
-      <div id="viewEditor" class="view-content" style="display: none;">
-        <div class="editor-view">
-          <div class="editor-header">
-            <button class="btn-text btn-cancel" onclick="closeEditor()">取消</button>
-            <h2 id="editorTitle">编辑闹钟</h2>
-            <button class="btn-text" onclick="saveAlarm()">保存</button>
+      <!-- 时间下拉选择 -->
+      <div class="form-group">
+        <label class="form-label">触发时间（24小时制）</label>
+        <div class="time-picker-row">
+          <div class="time-select-wrap">
+            <select id="editHourSelect"></select>
+            <span class="time-unit-label">时</span>
           </div>
-
-          <!-- 时间下拉选择 -->
-          <div class="form-group">
-            <label class="form-label">触发时间（24小时制下拉选择）</label>
-            <div class="time-picker-row">
-              <div class="time-select-wrap">
-                <select id="editHourSelect"></select>
-                <span class="time-unit-label">时</span>
-              </div>
-              <span class="time-colon">:</span>
-              <div class="time-select-wrap">
-                <select id="editMinuteSelect"></select>
-                <span class="time-unit-label">分</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">闹钟标签</label>
-            <input type="text" id="editLabel" class="form-input" placeholder="输入闹钟名称">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">重复周期</label>
-            <div class="chip-grid" id="freqChips"></div>
-          </div>
-
-          <!-- 工作日/节假日专属子模式 -->
-          <div id="workdayModeSection" class="form-group" style="display: none;">
-            <label class="form-label">工作日 / 调休设置</label>
-            <div class="mode-card active" id="modeChina" onclick="setWorkdayMode('china')">
-              <div class="mode-card-title">🇨🇳 中国法定调休（推荐）</div>
-              <div class="mode-card-desc">自动跳过国家法定放假日，周末调休补班准时响铃</div>
-            </div>
-            <div class="mode-card" id="modeStandard" onclick="setWorkdayMode('standard')">
-              <div class="mode-card-title">📅 普通周一至周五</div>
-              <div class="mode-card-desc">仅固定周一至周五响铃，不随节假日调整</div>
-            </div>
-          </div>
-
-          <!-- 每周星期选择 -->
-          <div id="weekdaySection" class="form-group" style="display: none;">
-            <label class="form-label">选择重复星期</label>
-            <div class="week-row" id="weekdayRow"></div>
-          </div>
-
-          <!-- 每月日期选择 -->
-          <div id="monthdaySection" class="form-group" style="display: none;">
-            <label class="form-label">每月第几天响铃</label>
-            <div class="custom-select-row">
-              <select id="editMonthDaySelect" class="custom-select"></select>
-            </div>
-          </div>
-
-          <!-- 每年日期选择 -->
-          <div id="yeardaySection" class="form-group" style="display: none;">
-            <label class="form-label">每年响铃日期</label>
-            <div class="custom-select-row">
-              <select id="editYearMonthSelect" class="custom-select" style="flex:1;"></select>
-              <select id="editYearDaySelect" class="custom-select" style="flex:1;"></select>
-            </div>
-          </div>
-
-          <div class="form-group" style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:12px 14px; border-radius:10px; border:1px solid var(--border);">
-            <span style="font-size:14px; font-weight:600;">振动提示</span>
-            <label class="switch">
-              <input type="checkbox" id="editVibrate" checked>
-              <span class="slider"></span>
-            </label>
+          <span class="time-colon">:</span>
+          <div class="time-select-wrap">
+            <select id="editMinuteSelect"></select>
+            <span class="time-unit-label">分</span>
           </div>
         </div>
       </div>
 
-      <!-- 视图3：到点响铃全屏 -->
-      <div id="viewRing" class="ring-screen" style="display: none;">
-        <div class="bell-animation">🔔</div>
-        <div class="ring-time" id="ringTime">07:30</div>
-        <div class="ring-title" id="ringLabel">工作日起床</div>
-        <div class="ring-sub">时间到！闹钟正在响铃...</div>
-        <div class="ring-actions">
-          <button class="btn-stop" onclick="dismissAlarm()">停止响铃</button>
-          <button class="btn-snooze" onclick="snoozeAlarm()">贪睡 5 分钟</button>
+      <div class="form-group">
+        <label class="form-label">闹钟标签</label>
+        <input type="text" id="editLabel" class="form-input" placeholder="输入闹钟名称">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">重复周期</label>
+        <div class="chip-grid" id="freqChips"></div>
+      </div>
+
+      <!-- 工作日/节假日专属子模式 -->
+      <div id="workdayModeSection" class="form-group" style="display: none;">
+        <label class="form-label">工作日 / 调休设置</label>
+        <div class="mode-card active" id="modeChina" onclick="setWorkdayMode('china')">
+          <div class="mode-card-title">🇨🇳 中国法定调休（推荐）</div>
+          <div class="mode-card-desc">自动跳过国家法定放假日，周末调休补班准时响铃</div>
+        </div>
+        <div class="mode-card" id="modeStandard" onclick="setWorkdayMode('standard')">
+          <div class="mode-card-title">📅 普通周一至周五</div>
+          <div class="mode-card-desc">仅固定周一至周五响铃，不随节假日调整</div>
         </div>
       </div>
 
+      <!-- 每周星期选择 -->
+      <div id="weekdaySection" class="form-group" style="display: none;">
+        <label class="form-label">选择重复星期</label>
+        <div class="week-row" id="weekdayRow"></div>
+      </div>
+
+      <!-- 每月日期选择 -->
+      <div id="monthdaySection" class="form-group" style="display: none;">
+        <label class="form-label">每月第几天响铃</label>
+        <div class="custom-select-row">
+          <select id="editMonthDaySelect" class="custom-select"></select>
+        </div>
+      </div>
+
+      <!-- 每年日期选择 -->
+      <div id="yeardaySection" class="form-group" style="display: none;">
+        <label class="form-label">每年响铃日期</label>
+        <div class="custom-select-row">
+          <select id="editYearMonthSelect" class="custom-select" style="flex:1;"></select>
+          <select id="editYearDaySelect" class="custom-select" style="flex:1;"></select>
+        </div>
+      </div>
+
+      <div class="form-group" style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:14px 16px; border-radius:14px; border:1px solid var(--border);">
+        <span style="font-size:15px; font-weight:700;">振动提示</span>
+        <label class="switch">
+          <input type="checkbox" id="editVibrate" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
     </div>
   </div>
 
-  <!-- 右侧控制台 -->
-  <div class="control-panel">
-    <div class="panel-header">
-      <h3>西瓜闹钟 🍉 · 仿真测试控制台</h3>
-      <p>完全运行核心 TS/JS 计算引擎与 Web Audio 仿真</p>
+  <!-- 视图3：到点响铃全屏 -->
+  <div id="viewRing" class="ring-screen" style="display: none;">
+    <div class="bell-animation">🔔</div>
+    <div class="ring-time" id="ringTime">07:30</div>
+    <div class="ring-title" id="ringLabel">工作日起床</div>
+    <div class="ring-sub">时间到！闹钟正在响铃...</div>
+    <div class="ring-actions">
+      <button class="btn-stop" onclick="dismissAlarm()">停止响铃</button>
+      <button class="btn-snooze" onclick="snoozeAlarm()">贪睡 5 分钟</button>
     </div>
-
-    <div class="status-card">
-      <div class="status-item">
-        <span class="status-label">云端同步服务:</span>
-        <span class="status-value"><span class="badge-ok">HTTPS 就绪</span> https://www.xiguazi.online</span>
-      </div>
-      <div class="status-item">
-        <span class="status-label">已加载节假日数据:</span>
-        <span class="status-value" id="statHolidays">35 个法定节假日, 6 个调休补班日</span>
-      </div>
-      <div class="status-item">
-        <span class="status-label">当前参考时间:</span>
-        <span class="status-value" id="statTime">--:--:--</span>
-      </div>
-    </div>
-
-    <div class="panel-header">
-      <h4 style="font-size:15px; color:#f1f5f9;">快速交互与响铃测试</h4>
-    </div>
-
-    <div class="test-actions">
-      <button class="test-btn primary" onclick="triggerTestRingNow()">⚡ 立即模拟响铃</button>
-      <button class="test-btn" onclick="addCountdownTestAlarm(5)">⏱️ 设一个 5 秒后闹钟</button>
-      <button class="test-btn" onclick="addCountdownTestAlarm(30)">⏱️ 设一个 30 秒后闹钟</button>
-      <button class="test-btn" onclick="fetchLiveHolidays()">🔄 实时从腾讯云同步</button>
-    </div>
-
-    <div class="panel-header">
-      <h4 style="font-size:14px; color:#f1f5f9;">实时运行日志</h4>
-    </div>
-    <div class="log-box" id="logBox"></div>
   </div>
 </div>
 
@@ -652,7 +523,6 @@
     const fromDt = new Date(from);
     if (alarm.freq === 'once') return alarm.fireAt > from ? alarm.fireAt : null;
     
-    // 取时分秒
     const fDt = new Date(alarm.fireAt);
     const H = fDt.getHours(), M = fDt.getMinutes(), S = fDt.getSeconds();
 
@@ -684,57 +554,86 @@
     return null;
   }
 
-  // --- 状态存储 ---
-  let alarms = [
-    {
-      id: '1',
-      label: '工作日起床',
-      enabled: true,
-      fireAt: new Date().setHours(7, 30, 0, 0),
-      freq: 'workday',
-      workdayMode: 'china',
-      sound: 'default',
-      vibrate: true
-    },
-    {
-      id: '2',
-      label: '每月还信用卡',
-      enabled: true,
-      fireAt: new Date().setHours(10, 0, 0, 0),
-      freq: 'month',
-      byMonthday: [15],
-      sound: 'default',
-      vibrate: true
-    },
-    {
-      id: '3',
-      label: '结婚纪念日',
-      enabled: true,
-      fireAt: new Date().setHours(9, 0, 0, 0),
-      freq: 'year',
-      byMonth: [5],
-      byMonthday: [20],
-      sound: 'default',
-      vibrate: true
-    },
-    {
-      id: '4',
-      label: '周末自然醒',
-      enabled: false,
-      fireAt: new Date().setHours(10, 0, 0, 0),
-      freq: 'weekend',
-      workdayMode: 'china',
-      sound: 'default',
-      vibrate: true
-    }
-  ];
+  // --- 本地持久化缓存 ---
+  function loadStoredAlarms() {
+    try {
+      const s = localStorage.getItem('watermelon_alarms');
+      if (s) return JSON.parse(s);
+    } catch(e) {}
+    return [
+      {
+        id: '1',
+        label: '工作日起床',
+        enabled: true,
+        fireAt: new Date().setHours(7, 30, 0, 0),
+        freq: 'workday',
+        workdayMode: 'china',
+        vibrate: true
+      },
+      {
+        id: '2',
+        label: '每月还信用卡',
+        enabled: true,
+        fireAt: new Date().setHours(10, 0, 0, 0),
+        freq: 'month',
+        byMonthday: [15],
+        vibrate: true
+      },
+      {
+        id: '3',
+        label: '结婚纪念日',
+        enabled: true,
+        fireAt: new Date().setHours(9, 0, 0, 0),
+        freq: 'year',
+        byMonth: [5],
+        byMonthday: [20],
+        vibrate: true
+      },
+      {
+        id: '4',
+        label: '周末自然醒',
+        enabled: false,
+        fireAt: new Date().setHours(10, 0, 0, 0),
+        freq: 'weekend',
+        workdayMode: 'china',
+        vibrate: true
+      }
+    ];
+  }
 
+  function persistAlarms() {
+    try {
+      localStorage.setItem('watermelon_alarms', JSON.stringify(alarms));
+    } catch(e) {}
+  }
+
+  let alarms = loadStoredAlarms();
   let currentEditingAlarm = null;
   let activeFreq = 'workday';
   let activeWorkdayMode = 'china';
   let activeWeekdays = [1, 2, 3, 4, 5];
 
-  // --- 音效发生器（Web Audio API 仿真 600Hz 蜂鸣）---
+  // --- 原生桥接注册 ---
+  function syncNativeAlarm(alarm) {
+    if (window.AndroidAlarm) {
+      if (alarm.enabled) {
+        const next = nextTrigger(alarm, Date.now());
+        if (next) window.AndroidAlarm.setAlarm(alarm.id, next, alarm.label);
+      } else {
+        window.AndroidAlarm.cancelAlarm(alarm.id);
+      }
+    }
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.iOSAlarm) {
+      if (alarm.enabled) {
+        const next = nextTrigger(alarm, Date.now());
+        if (next) window.webkit.messageHandlers.iOSAlarm.postMessage({ action: 'setAlarm', id: alarm.id, timestamp: next, label: alarm.label });
+      } else {
+        window.webkit.messageHandlers.iOSAlarm.postMessage({ action: 'cancelAlarm', id: alarm.id });
+      }
+    }
+  }
+
+  // --- 音效发生器 ---
   let audioCtx = null;
   let audioTimer = null;
   function playRingtone() {
@@ -760,6 +659,7 @@
   }
   function stopRingtone() {
     if (audioTimer) { clearInterval(audioTimer); audioTimer = null; }
+    if (window.AndroidAlarm) window.AndroidAlarm.stopRing();
   }
 
   // --- UI 初始化与渲染 ---
@@ -774,7 +674,6 @@
   ];
   const WEEK_NAMES = ['日', '一', '二', '三', '四', '五', '六'];
 
-  // 初始化时间下拉选项
   function initTimeOptions() {
     const hSelect = document.getElementById('editHourSelect');
     hSelect.innerHTML = Array.from({length: 24}, (_, i) => {
@@ -802,12 +701,6 @@
     ydSelect.innerHTML = Array.from({length: 31}, (_, i) => {
       return `<option value="${i+1}">${i+1} 日</option>`;
     }).join('');
-  }
-
-  function log(msg) {
-    const box = document.getElementById('logBox');
-    const time = new Date().toLocaleTimeString();
-    box.innerHTML = `<div class="log-item">[${time}] ${msg}</div>` + box.innerHTML;
   }
 
   function renderList() {
@@ -870,7 +763,8 @@
     const a = alarms.find(x => x.id === id);
     if (a) {
       a.enabled = enabled;
-      log(`闹钟 [${a.label}] 已${enabled ? '开启' : '关闭'}`);
+      syncNativeAlarm(a);
+      persistAlarms();
       renderList();
     }
   }
@@ -969,6 +863,7 @@
     const byMonthday = activeFreq === 'month' ? [monthDay] : (activeFreq === 'year' ? [yearDay] : undefined);
     const byMonth = activeFreq === 'year' ? [yearMonth] : undefined;
 
+    let targetAlarm;
     if (currentEditingAlarm) {
       currentEditingAlarm.label = label;
       currentEditingAlarm.fireAt = fireAt;
@@ -979,9 +874,9 @@
       currentEditingAlarm.byMonth = byMonth;
       currentEditingAlarm.vibrate = vibrate;
       currentEditingAlarm.enabled = true;
-      log(`已更新闹钟: [${label}] ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`);
+      targetAlarm = currentEditingAlarm;
     } else {
-      const newAlarm = {
+      targetAlarm = {
         id: 'al_' + Date.now().toString(36),
         label,
         fireAt,
@@ -991,102 +886,54 @@
         byMonthday,
         byMonth,
         vibrate,
-        sound: 'default',
         enabled: true
       };
-      alarms.push(newAlarm);
-      log(`已创建新闹钟: [${label}] ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`);
+      alarms.push(targetAlarm);
     }
+    
+    syncNativeAlarm(targetAlarm);
+    persistAlarms();
     closeEditor();
     renderList();
   }
 
-  // --- 响铃流程 ---
   function ring(alarm) {
     playRingtone();
     const d = new Date(alarm.fireAt);
     document.getElementById('ringTime').innerText = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
     document.getElementById('ringLabel').innerText = alarm.label;
     document.getElementById('viewRing').style.display = 'flex';
-    log(`🔔 闹钟到点响铃！[${alarm.label}]`);
   }
 
   function dismissAlarm() {
     stopRingtone();
     document.getElementById('viewRing').style.display = 'none';
-    log('已点击「停止响铃」');
   }
 
   function snoozeAlarm() {
     stopRingtone();
     document.getElementById('viewRing').style.display = 'none';
-    log('已开启「贪睡 5 分钟」，5秒后将再次提醒');
     setTimeout(() => {
       ring({ label: '贪睡提醒', fireAt: Date.now() });
     }, 5000);
   }
 
-  // --- 控制台动作 ---
-  function triggerTestRingNow() {
-    ring({ label: '仿真测试闹钟', fireAt: Date.now() });
-  }
-
-  function addCountdownTestAlarm(seconds) {
-    const target = Date.now() + seconds * 1000;
-    const label = `${seconds}秒倒计时测试`;
-    const newAlarm = {
-      id: 'test_' + Date.now(),
-      label,
-      fireAt: target,
-      freq: 'once',
-      enabled: true,
-      sound: 'default',
-      vibrate: true
-    };
-    alarms.unshift(newAlarm);
-    renderList();
-    log(`已添加倒计时测试闹钟：将在 ${seconds} 秒后准时响铃！`);
-  }
-
-  async function fetchLiveHolidays() {
-    log('正在向 https://www.xiguazi.online/alarm/holidays.json 发送同步请求...');
-    let data = null;
-
-    // 优先尝试本地代理（规避浏览器 CORS），若不行则直连
+  // --- 静默云端同步 ---
+  async function silentSyncHolidays() {
     try {
-      const res = await fetch('/api/proxy-holidays');
-      if (res.ok) data = await res.json();
-    } catch(e) {}
-
-    if (!data) {
-      try {
-        const res = await fetch('https://www.xiguazi.online/alarm/holidays.json');
-        if (res.ok) data = await res.json();
-      } catch(e) {
-        log(`❌ 浏览器直连受限 (CORS): ${e.message}，正在尝试直连代理...`);
+      const res = await fetch('https://www.xiguazi.online/alarm/holidays.json');
+      if (res.ok) {
+        const data = await res.json();
+        (data.holidays || []).forEach(h => HOLIDAYS_SET.add(h));
+        (data.makeupWorkdays || []).forEach(w => MAKEUP_WORKDAYS_SET.add(w));
+        renderList();
       }
-    }
-
-    if (data) {
-      (data.holidays || []).forEach(h => HOLIDAYS_SET.add(h));
-      (data.makeupWorkdays || []).forEach(w => MAKEUP_WORKDAYS_SET.add(w));
-      document.getElementById('statHolidays').innerText = `${HOLIDAYS_SET.size} 个法定节假日, ${MAKEUP_WORKDAYS_SET.size} 个调休补班日`;
-      log(`✅ 云端同步成功！版本: ${data.version}，已加载最新节假日数据`);
-      renderList();
-    } else {
-      log(`❌ 请求失败，已自动使用内置 2026 离线节假日数据兜底`);
-    }
+    } catch(e) {}
   }
 
-  // --- 主循环与时间更新 ---
+  // --- 主循环与初始化 ---
   setInterval(() => {
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    document.getElementById('currentClock').innerText = timeStr;
-    document.getElementById('statTime').innerText = now.toLocaleTimeString();
-
-    // 检查是否有闹钟到点触发
-    const nowMs = now.getTime();
+    const nowMs = Date.now();
     alarms.forEach(a => {
       if (a.enabled) {
         const next = nextTrigger(a, nowMs - 1000);
@@ -1097,10 +944,12 @@
     });
   }, 1000);
 
-  // 初始化
   initTimeOptions();
   renderList();
-  log('跨平台定时闹钟交互预览服务已就绪（支持时分下拉选、每月/每年周期、CORS 自动转发）！');
+  silentSyncHolidays();
+
+  // 向原生层初始化所有闹钟
+  alarms.forEach(a => syncNativeAlarm(a));
 </script>
 </body>
 </html>
