@@ -1,0 +1,34 @@
+package com.alarmclock
+
+import android.app.Application
+import com.facebook.react.PackageList
+import com.facebook.react.ReactApplication
+import com.facebook.react.ReactNativeHost
+import com.facebook.react.ReactPackage
+import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
+import com.facebook.react.defaults.DefaultReactNativeHost
+import com.alarmclock.alarm.AlarmPackage   // ← 引入自定义 Package
+
+class MainApplication : Application(), ReactApplication {
+
+    private val mReactNativeHost: ReactNativeHost =
+        object : DefaultReactNativeHost(this) {
+            override fun getUseDeveloperSupport(): Boolean = BuildConfig.DEBUG
+            override fun getPackages(): List<ReactPackage> {
+                val packages = PackageList(this).packages
+                // 手动注册闹钟原生模块
+                packages.add(AlarmPackage())
+                return packages
+            }
+            override fun getJSMainModuleName(): String = "index"
+            override fun isNewArchEnabled(): Boolean = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED
+            override fun isHermesEnabled(): Boolean = BuildConfig.IS_HERMES_ENABLED
+        }
+
+    override fun getReactNativeHost(): ReactNativeHost = mReactNativeHost
+
+    override fun onCreate() {
+        super.onCreate()
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) load()
+    }
+}

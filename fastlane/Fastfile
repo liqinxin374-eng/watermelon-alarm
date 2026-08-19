@@ -1,0 +1,24 @@
+# Fastlane 自动化打包（需在本机/CI 执行，依赖 Xcode 与 Android SDK）
+# 安装：gem install fastlane
+# Android 出包：bundle exec fastlane android build
+# iOS 出包：  bundle exec fastlane ios build   （必须在 macOS 上运行）
+
+default_platform(:android)
+
+platform :android do
+  desc "构建 Android Release AAB"
+  lane :build do
+    gradle(task: "clean assembleRelease", project_dir: "android")
+    # 产物：android/app/build/outputs/bundle/release/app-release.aab
+    # 如需 APK：gradle(task: "assembleRelease", project_dir: "android")
+  end
+end
+
+platform :ios do
+  desc "构建 iOS Release IPA（仅 macOS）"
+  lane :build do
+    setup_ci if ENV["CI"]
+    gym(scheme: "AlarmClock", configuration: "Release", export_method: "app-store")
+    # 产物：AlarmClock.ipa
+  end
+end

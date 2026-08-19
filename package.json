@@ -1,0 +1,23 @@
+{
+  "name": "watermelon-alarm",
+  "version": "1.0.0",
+  "description": "西瓜闹钟 🍉 · 跨平台高可用定时闹钟（React Native + TS，支持中国法定工作日调休、全周期与精准云端同步）",
+  "main": "index.js",
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "test": "tsx __tests__/recurrence.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-native": "^0.74.0",
+    "@react-native-async-storage/async-storage": "^1.23.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2",
+    "@types/react": "^18.3.0",
+    "@types/react-native": "^0.73.0"
+  }
+}
