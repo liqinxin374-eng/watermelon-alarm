@@ -22,6 +22,25 @@
     <string>1</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
+    <key>UILaunchScreen</key>
+    <dict/>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon.png</string>
+    <key>CFBundleIcons</key>
+    <dict>
+        <key>CFBundlePrimaryIcon</key>
+        <dict>
+            <key>CFBundleIconFiles</key>
+            <array>
+                <string>AppIcon</string>
+                <string>AppIcon.png</string>
+                <string>AppIcon60x60</string>
+                <string>AppIcon76x76</string>
+            </array>
+            <key>CFBundleIconName</key>
+            <string>AppIcon</string>
+        </dict>
+    </dict>
     <key>UIRequiredDeviceCapabilities</key>
     <array>
         <string>arm64</string>
