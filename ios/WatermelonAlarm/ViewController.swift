@@ -38,7 +38,7 @@ class ViewController: UIViewController, WKScriptMessageHandler {
     }
 
     func startAlarmAudio() {
-        if audioPlayer == nil, let soundUrl = Bundle.main.url(forResource: "alarm", withExtension: "wav") {
+        if audioPlayer == nil, let soundUrl = Bundle.main.url(forResource: "alarm", withExtension: "caf") ?? Bundle.main.url(forResource: "alarm", withExtension: "wav") {
             do {
                 audioPlayer = try AVAudioPlayer(contentsOf: soundUrl)
                 audioPlayer?.numberOfLoops = -1
@@ -50,7 +50,7 @@ class ViewController: UIViewController, WKScriptMessageHandler {
         }
         
         vibrateTimer?.invalidate()
-        vibrateTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+        vibrateTimer = Timer.scheduledTimer(withTimeInterval: 0.8, repeats: true) { _ in
             AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
         }
     }
@@ -87,7 +87,7 @@ class ViewController: UIViewController, WKScriptMessageHandler {
             let content = UNMutableNotificationContent()
             content.title = "⏰ 西瓜闹钟 · 正在响铃！"
             content.body = "\(label) · 请起床/开始行动！"
-            content.sound = UNNotificationSound(named: UNNotificationSoundName("alarm.wav"))
+            content.sound = UNNotificationSound(named: UNNotificationSoundName("alarm.caf"))
             content.categoryIdentifier = "ALARM_CATEGORY"
             
             if #available(iOS 15.0, *) {

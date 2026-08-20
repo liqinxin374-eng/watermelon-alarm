@@ -7,6 +7,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // 配置音频会话：支持静音模式下大声播放与后台不休眠
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.duckOthers])
             try AVAudioSession.sharedInstance().setActive(true)
@@ -26,7 +27,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         )
         UNUserNotificationCenter.current().setNotificationCategories([alarmCategory])
 
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
+        // 请求通知权限（包含时效性重要提醒权限）
+        if #available(iOS 15.0, *) {
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge, .timeSensitive]) { granted, error in
+                print("Notification authorization: \(granted), error: \(String(describing: error))")
+            }
+        } else {
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+                print("Notification authorization: \(granted)")
+            }
+        }
         
         let vc = ViewController()
         window = UIWindow(frame: UIScreen.main.bounds)
@@ -42,7 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
             vc.triggerAlarmFromNotification(id: id, label: label)
         }
         if #available(iOS 14.0, *) {
-            completionHandler([.banner, .sound, .badge])
+            completionHandler([.banner, .sound, .badge, .list])
         } else {
             completionHandler([.alert, .sound, .badge])
         }
