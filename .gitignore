@@ -10,6 +10,7 @@ android/.gradle/
 ios/build/
 *.apk
 !西瓜闹钟_v1.0.0.apk
+*.ipa
 dist/
 output/
 
