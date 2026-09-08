@@ -16,12 +16,15 @@
       --danger: #ef4444;
       --danger-hover: #dc2626;
       --dark-bg: #0f172a;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --purple: #8b5cf6;
     }
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       -webkit-user-select: none;
@@ -42,7 +45,7 @@
       display: flex;
       flex-direction: column;
       padding-top: env(safe-area-inset-top, 12px);
-      padding-bottom: env(safe-area-inset-bottom, 12px);
+      padding-bottom: calc(58px + env(safe-area-inset-bottom, 12px));
       position: relative;
       background: var(--bg);
     }
@@ -55,6 +58,51 @@
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       position: relative;
+    }
+
+    /* 底部导航栏 */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      max-width: 540px;
+      margin: 0 auto;
+      height: calc(56px + env(safe-area-inset-bottom, 12px));
+      padding-bottom: env(safe-area-inset-bottom, 12px);
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      z-index: 50;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
+    }
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      cursor: pointer;
+      color: #94a3b8;
+      font-size: 11px;
+      font-weight: 700;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .nav-item.active {
+      color: var(--primary);
+    }
+    .nav-icon {
+      font-size: 22px;
+      margin-bottom: 2px;
+      transition: transform 0.2s;
+    }
+    .nav-item.active .nav-icon {
+      transform: translateY(-1px) scale(1.1);
     }
 
     /* 列表页头部 */
@@ -162,7 +210,7 @@
     /* 悬浮新建按钮 */
     .fab-btn {
       position: fixed;
-      bottom: max(24px, env(safe-area-inset-bottom, 16px) + 16px);
+      bottom: calc(68px + env(safe-area-inset-bottom, 12px));
       right: 20px;
       background: var(--primary);
       color: #fff;
@@ -381,6 +429,292 @@
       cursor: pointer;
     }
     .btn-snooze:active { background: rgba(255,255,255,0.05); }
+
+    /* ========================================================= */
+    /* 日历专属视图样式 (CALENDAR STYLES)                       */
+    /* ========================================================= */
+    .calendar-view {
+      padding: 12px 16px 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .cal-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 4px;
+    }
+    .cal-title-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .cal-year-month {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text);
+    }
+    .cal-lunar-summary {
+      font-size: 13px;
+      color: var(--sub);
+      font-weight: 700;
+    }
+    .cal-nav-btns {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cal-btn {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 7px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cal-btn:active { background: #f1f5f9; }
+    .cal-btn-today {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: var(--primary);
+    }
+
+    /* 节假日概览横幅 */
+    .cal-overview-banner {
+      background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+      border: 1px solid #bbf7d0;
+      border-radius: 16px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+    .cal-overview-text {
+      color: #166534;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cal-overview-tags {
+      display: flex;
+      gap: 6px;
+    }
+    .cal-tag-pill {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .pill-rest { background: #fee2e2; color: #b91c1c; }
+    .pill-work { background: #f1f5f9; color: #475569; }
+
+    /* 星期行 */
+    .cal-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #94a3b8;
+      padding: 4px 0;
+    }
+    .cal-weekdays .weekend { color: #f43f5e; }
+
+    /* 日期网格容器 */
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      background: #fff;
+      border-radius: 20px;
+      padding: 10px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+      border: 1px solid var(--border);
+    }
+    .cal-cell {
+      position: relative;
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      padding: 2px;
+    }
+    .cal-cell:active { transform: scale(0.92); }
+    .cal-cell.other-month { opacity: 0.35; }
+    .cal-cell.today {
+      border: 2px solid var(--primary);
+    }
+    .cal-cell.selected {
+      background: var(--primary) !important;
+      color: #fff !important;
+      box-shadow: 0 4px 14px rgba(37,99,235,0.4);
+    }
+    .cal-cell.selected .cal-day-num { color: #fff !important; }
+    .cal-cell.selected .cal-lunar-txt { color: #e0e7ff !important; font-weight: 700; }
+    .cal-day-num {
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--text);
+    }
+    .weekend-day { color: #e11d48; }
+    .cal-lunar-txt {
+      font-size: 10px;
+      font-weight: 600;
+      color: #64748b;
+      margin-top: 2px;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding: 0 2px;
+    }
+    .cal-lunar-txt.is-fest {
+      color: #e11d48;
+      font-weight: 800;
+    }
+    .cal-lunar-txt.is-term {
+      color: #0284c7;
+      font-weight: 800;
+    }
+    .cal-lunar-txt.is-intl {
+      color: #7c3aed;
+      font-weight: 800;
+    }
+    /* 角标 */
+    .cal-badge {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      font-size: 8px;
+      font-weight: 900;
+      width: 15px;
+      height: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      line-height: 1;
+    }
+    .badge-xiu { background: #ef4444; color: #fff; }
+    .badge-ban { background: #64748b; color: #fff; }
+    .badge-dot-alarm {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      position: absolute;
+      bottom: 2px;
+      background: #10b981;
+    }
+
+    /* 选中日期详情卡片 */
+    .cal-detail-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 18px 20px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .cal-detail-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px dashed var(--border);
+      padding-bottom: 12px;
+    }
+    .cal-detail-date {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .cal-detail-lunar {
+      font-size: 13px;
+      color: #64748b;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .cal-detail-status-pill {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+    .cal-festival-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cal-festival-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f8fafc;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+    .cal-fest-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .cal-fest-cn { background: #fee2e2; color: #dc2626; }
+    .cal-fest-intl { background: #ede9fe; color: #7c3aed; }
+    .cal-fest-term { background: #e0f2fe; color: #0284c7; }
+    .cal-fest-title { font-weight: 800; color: #1e293b; }
+    .cal-fest-sub { font-size: 12px; color: #64748b; margin-left: auto; font-weight: 600; }
+    
+    .cal-alarm-hint-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #065f46;
+      font-weight: 700;
+    }
+
+    .btn-create-alarm-date {
+      width: 100%;
+      background: #eff6ff;
+      border: 1.5px solid #bfdbfe;
+      color: var(--primary);
+      padding: 14px;
+      border-radius: 16px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-create-alarm-date:active { background: #dbeafe; transform: scale(0.98); }
   </style>
 </head>
 <body>
@@ -396,7 +730,70 @@
     <button class="fab-btn" onclick="openEditor(null)">+ 新建闹钟</button>
   </div>
 
-  <!-- 视图2：编辑/新建闹钟 -->
+  <!-- 视图2：万年历与节假日 -->
+  <div id="viewCalendar" class="view-content" style="display: none;">
+    <div class="calendar-view">
+      <!-- 顶部月份导航栏 -->
+      <div class="cal-header-bar">
+        <div class="cal-title-wrap">
+          <div class="cal-year-month" id="calYearMonthText">2026年 9月</div>
+          <div class="cal-lunar-summary" id="calGanzhiYear">丙午马年</div>
+        </div>
+        <div class="cal-nav-btns">
+          <button type="button" class="cal-btn" onclick="navMonth(-1)">◀</button>
+          <button type="button" class="cal-btn cal-btn-today" onclick="jumpToToday()">今天</button>
+          <button type="button" class="cal-btn" onclick="navMonth(1)">▶</button>
+        </div>
+      </div>
+
+      <!-- 节假日速览横幅 -->
+      <div class="cal-overview-banner">
+        <span class="cal-overview-text" id="calMonthOverviewText">🇨🇳 法定节假日已自动同步</span>
+        <div class="cal-overview-tags">
+          <span class="cal-tag-pill pill-rest" id="calRestCount">休 3天</span>
+          <span class="cal-tag-pill pill-work" id="calWorkCount">班 1天</span>
+        </div>
+      </div>
+
+      <!-- 星期表头 -->
+      <div class="cal-weekdays">
+        <div class="weekend">日</div>
+        <div>一</div>
+        <div>二</div>
+        <div>三</div>
+        <div>四</div>
+        <div>五</div>
+        <div class="weekend">六</div>
+      </div>
+
+      <!-- 42格日历网格 -->
+      <div class="cal-grid" id="calGridContainer"></div>
+
+      <!-- 选中日期详情卡片 -->
+      <div class="cal-detail-card">
+        <div class="cal-detail-head">
+          <div>
+            <div class="cal-detail-date" id="calDetailDate">2026年9月8日 星期二</div>
+            <div class="cal-detail-lunar" id="calDetailLunar">农历 丙午年【马年】 七月廿七</div>
+          </div>
+          <div class="cal-detail-status-pill" id="calDetailStatusPill">法定工作日</div>
+        </div>
+
+        <div class="cal-festival-list" id="calDetailFestivals"></div>
+
+        <div class="cal-alarm-hint-box" id="calAlarmHintBox" style="display: none;">
+          <span>⏰</span>
+          <span id="calAlarmHintText">今日有响铃闹钟：工作日起床 (07:30)</span>
+        </div>
+
+        <button type="button" class="btn-create-alarm-date" onclick="createAlarmForSelectedDate()">
+          <span>⏰</span> 为该日期设置专属闹钟
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 视图3：编辑/新建闹钟 -->
   <div id="viewEditor" class="view-content" style="display: none;">
     <div class="editor-view">
       <div class="editor-header">
@@ -477,7 +874,7 @@
     </div>
   </div>
 
-  <!-- 视图3：到点响铃全屏 -->
+  <!-- 视图4：到点响铃全屏 -->
   <div id="viewRing" class="ring-screen" style="display: none;">
     <div class="bell-animation">🔔</div>
     <div class="ring-time" id="ringTime">07:30</div>
@@ -488,10 +885,250 @@
       <button class="btn-snooze" onclick="snoozeAlarm()">贪睡 5 分钟</button>
     </div>
   </div>
+
+  <!-- 底部选项卡导航栏 -->
+  <div class="bottom-nav" id="bottomNav">
+    <div class="nav-item active" id="tabAlarm" onclick="switchTab('alarm')">
+      <span class="nav-icon">⏰</span>
+      <span>闹钟</span>
+    </div>
+    <div class="nav-item" id="tabCalendar" onclick="switchTab('calendar')">
+      <span class="nav-icon">📅</span>
+      <span>日历·节日</span>
+    </div>
+  </div>
 </div>
 
 <script>
-  // --- 核心节假日数据集与判定引擎 ---
+  // =========================================================
+  // 1. 农历、节气与国内外节假日高精度运算引擎 (100% 本地离线可用)
+  // =========================================================
+  const LUNAR_INFO = [
+    0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x056a0,0x09ad0,0x055d2,
+    0x04ae0,0x0a5b6,0x0a4d0,0x0d250,0x1d255,0x0b540,0x0d6a0,0x0ada2,0x095b0,0x14977,
+    0x04970,0x0a4b0,0x0b4b5,0x06a50,0x06d40,0x1ab54,0x02b60,0x09570,0x052f2,0x04970,
+    0x06566,0x0d4a0,0x0ea50,0x06e95,0x05ad0,0x02b60,0x186e3,0x092e0,0x1c8d7,0x0c950,
+    0x0d4a0,0x1d8a6,0x0b550,0x056a0,0x1a5b4,0x025d0,0x092d0,0x0d2b2,0x0a950,0x0b557,
+    0x06ca0,0x0b550,0x15355,0x04da0,0x0a5d0,0x14573,0x052d0,0x0a9a8,0x0e950,0x06aa0,
+    0x0aea6,0x0ab50,0x04b60,0x0aae4,0x0a570,0x05260,0x0f263,0x0d950,0x05b57,0x056a0,
+    0x096d0,0x04dd5,0x04ad0,0x0a4d0,0x0d4d4,0x0d250,0x0d558,0x0b540,0x0b5a0,0x195a6,
+    0x095b0,0x049b0,0x0a974,0x0a4b0,0x0b27a,0x06a50,0x06d40,0x0af46,0x0ab60,0x09570,
+    0x04af5,0x04970,0x064b0,0x074a3,0x0ea50,0x06b58,0x055c0,0x0ab60,0x096d5,0x092e0,
+    0x0c960,0x0d954,0x0d4a0,0x0da50,0x07552,0x056a0,0x0abb7,0x025d0,0x092d0,0x0cab5,
+    0x0a950,0x0b4a0,0x0baa4,0x0ad50,0x055d9,0x04ba0,0x0a5b0,0x15176,0x052b0,0x0a930,
+    0x07954,0x06aa0,0x0ad50,0x05b52,0x04b60,0x0a6e6,0x0a4e0,0x0d260,0x0ea65,0x0d530,
+    0x05aa0,0x076a3,0x096d0,0x04bd7,0x04ad0,0x0a4d0,0x1d0b6,0x0d250,0x0d520,0x0dd45,
+    0x0b5a0,0x056d0,0x055b2,0x049b0,0x0a577,0x0a4b0,0x0aa50,0x1b255,0x06d20,0x0ada0,
+    0x14b63,0x09370,0x049f8,0x04970,0x064b0,0x168a6,0x0ea50,0x06aa0,0x1a6c4,0x0aae0
+  ];
+
+  const LUNAR_MONTHS = ['正月','二月','三月','四月','五月','六月','七月','八月','九月','十月','冬月','腊月'];
+  const LUNAR_DAYS = [
+    '初一','初二','初三','初四','初五','初六','初七','初八','初九','初十',
+    '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十',
+    '廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'
+  ];
+  const TIANGAN = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+  const DIZHI = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+  const ANIMALS = ['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+
+  const SOLAR_TERMS = [
+    '小寒','大寒','立春','雨水','惊蛰','春分',
+    '清明','谷雨','立夏','小满','芒种','夏至',
+    '小暑','大暑','立秋','处暑','白露','秋分',
+    '寒露','霜降','立冬','小雪','大雪','冬至'
+  ];
+  const SOLAR_TERM_INFO = [
+    0,21208,42467,63836,85337,107014,
+    128867,150921,173149,195551,218072,240693,
+    263343,285989,308563,331033,353350,375494,
+    397447,419210,440795,462224,483532,504758
+  ];
+
+  function lYearDays(y) {
+    let sum = 348;
+    for (let i = 0x8000; i > 0x8; i >>= 1) sum += (LUNAR_INFO[y - 1900] & i) ? 1 : 0;
+    return sum + leapDays(y);
+  }
+  function leapMonth(y) { return LUNAR_INFO[y - 1900] & 0xf; }
+  function leapDays(y) {
+    if (leapMonth(y)) return (LUNAR_INFO[y - 1900] & 0x10000) ? 30 : 29;
+    return 0;
+  }
+  function monthDays(y, m) {
+    if (m > 12 || m < 1) return -1;
+    return (LUNAR_INFO[y - 1900] & (0x10000 >> m)) ? 30 : 29;
+  }
+
+  function solarToLunar(y, m, d) {
+    let offset = (Date.UTC(y, m - 1, d) - Date.UTC(1900, 0, 31)) / 86400000;
+    let temp = 0;
+    let year = 1900;
+    for (; year < 2050 && offset > 0; year++) {
+      temp = lYearDays(year);
+      offset -= temp;
+    }
+    if (offset < 0) {
+      offset += temp;
+      year--;
+    }
+    let isLeap = false;
+    let leap = leapMonth(year);
+    let month = 1;
+    for (; month < 13 && offset > 0; month++) {
+      if (leap > 0 && month === (leap + 1) && !isLeap) {
+        --month;
+        isLeap = true;
+        temp = leapDays(year);
+      } else {
+        temp = monthDays(year, month);
+      }
+      if (isLeap && month === (leap + 1)) isLeap = false;
+      offset -= temp;
+    }
+    if (offset === 0 && leap > 0 && month === leap + 1) {
+      if (isLeap) isLeap = false;
+      else { isLeap = true; --month; }
+    }
+    if (offset < 0) {
+      offset += temp;
+      --month;
+    }
+    const day = Math.floor(offset + 1);
+    const gzY = TIANGAN[(year - 4) % 10] + DIZHI[(year - 4) % 12];
+    const animal = ANIMALS[(year - 4) % 12];
+    const monthStr = (isLeap ? '闰' : '') + LUNAR_MONTHS[month - 1];
+    const dayStr = LUNAR_DAYS[day - 1] || (day + '日');
+    return {
+      lunarYear: year,
+      lunarMonth: month,
+      lunarDay: day,
+      isLeap,
+      monthStr,
+      dayStr,
+      gzYear: gzY,
+      animal,
+      fullLunarStr: gzY + '【' + animal + '年】 ' + monthStr + dayStr
+    };
+  }
+
+  function getSolarTerm(y, m, d) {
+    for (let st = 0; st < 24; st++) {
+      const termDate = new Date(Date.UTC(1900, 0, 6, 2, 5) + (31556925974.7 * (y - 1900) + SOLAR_TERM_INFO[st] * 60000));
+      if (termDate.getUTCMonth() + 1 === m && termDate.getUTCDate() === d) {
+        return SOLAR_TERMS[st];
+      }
+    }
+    return null;
+  }
+
+  // 获取节假日集合（国内公历节日、农历传统节日、国外西方国际节日、二十四节气）
+  function getAllFestivals(y, m, d, lunar) {
+    const list = [];
+    const keyMD = m + '-' + d;
+
+    // 1. 中国公历节日
+    const cnSolarFestivals = {
+      '1-1': { name: '元旦', desc: '新年伊始，国家法定放假日' },
+      '3-5': { name: '学雷锋日', desc: '全国学雷锋纪念日' },
+      '3-8': { name: '妇女节', desc: '国际劳动妇女节' },
+      '3-12': { name: '植树节', desc: '中国植树节' },
+      '5-1': { name: '劳动节', desc: '国际五一劳动节，法定假日' },
+      '5-4': { name: '青年节', desc: '中国五四青年节' },
+      '6-1': { name: '儿童节', desc: '国际六一儿童节' },
+      '7-1': { name: '建党节', desc: '中国共产党建党纪念日' },
+      '8-1': { name: '建军节', desc: '中国人民解放军建军节' },
+      '9-3': { name: '抗战胜利日', desc: '中国人民抗日战争胜利纪念日' },
+      '9-10': { name: '教师节', desc: '中国教师节，尊师重道' },
+      '10-1': { name: '国庆节', desc: '中华人民共和国国庆节，法定假日' },
+      '12-13': { name: '国家公祭日', desc: '南京大屠杀死难者国家公祭日' }
+    };
+    if (cnSolarFestivals[keyMD]) {
+      list.push({ ...cnSolarFestivals[keyMD], type: 'cn', tag: '国内节日' });
+    }
+
+    // 2. 国际与西方重要节日
+    const intlFestivals = {
+      '2-14': { name: '情人节', desc: "Valentine's Day 西方传统情人节" },
+      '3-14': { name: '白色情人节', desc: "White Day 甜蜜回应日" },
+      '3-17': { name: '圣帕特里克节', desc: "St. Patrick's Day 绿色与幸运之日" },
+      '4-1': { name: '愚人节', desc: "April Fools' Day 幽默与欢乐日" },
+      '4-22': { name: '世界地球日', desc: "Earth Day 保护地球与绿色环保" },
+      '5-31': { name: '世界无烟日', desc: "World No Tobacco Day 健康呼吸" },
+      '10-31': { name: '万圣夜', desc: "Halloween Eve 狂欢变装夜" },
+      '11-1': { name: '万圣节', desc: "All Saints' Day 西方传统节日" },
+      '12-24': { name: '平安夜', desc: "Christmas Eve 圣诞前夕祥和夜" },
+      '12-25': { name: '圣诞节', desc: "Christmas Day 西方新年重大节日" },
+      '12-31': { name: '跨年夜', desc: "New Year's Eve 迎接崭新一年" }
+    };
+    if (intlFestivals[keyMD]) {
+      list.push({ ...intlFestivals[keyMD], type: 'intl', tag: '国外节日' });
+    }
+
+    // 浮动西方国际节日
+    const dt = new Date(y, m - 1, d);
+    const dayOfWeek = dt.getDay();
+    // 母亲节：5月第2个星期日
+    if (m === 5 && dayOfWeek === 0 && d >= 8 && d <= 14) {
+      list.push({ name: '母亲节', desc: "Mother's Day 感恩母爱与温情", type: 'intl', tag: '国际节日' });
+    }
+    // 父亲节：6月第3个星期日
+    if (m === 6 && dayOfWeek === 0 && d >= 15 && d <= 21) {
+      list.push({ name: '父亲节', desc: "Father's Day 感恩如山父爱", type: 'intl', tag: '国际节日' });
+    }
+    // 感恩节：11月第4个星期四
+    if (m === 11 && dayOfWeek === 4 && d >= 22 && d <= 28) {
+      list.push({ name: '感恩节', desc: "Thanksgiving Day 西方传统感恩团聚", type: 'intl', tag: '国外节日' });
+    }
+    // 黑色星期五：感恩节后一天
+    if (m === 11 && dayOfWeek === 5 && d >= 23 && d <= 29) {
+      list.push({ name: '黑色星期五', desc: "Black Friday 国际年终狂欢购物季", type: 'intl', tag: '国际消费' });
+    }
+
+    // 3. 农历传统节日
+    if (lunar) {
+      const lMD = lunar.lunarMonth + '-' + lunar.lunarDay;
+      const cnLunarFestivals = {
+        '1-1': { name: '春节', desc: '农历岁首，中华民族第一大节，辞旧迎新' },
+        '1-15': { name: '元宵节', desc: '上元佳节，赏花灯、吃元宵、猜灯谜' },
+        '2-2': { name: '龙抬头', desc: '二月二春龙节，剃龙头，鸿运当头' },
+        '3-3': { name: '上巳节', desc: '春浴祓禊，兰草踏青，传统女儿节' },
+        '5-5': { name: '端午节', desc: '纪念屈原，赛龙舟、吃粽子、挂艾草' },
+        '7-7': { name: '七夕节', desc: '牛郎织女鹊桥会，传统中国情人节' },
+        '7-15': { name: '中元节', desc: '七月半祭祖，放河灯，慎终追远' },
+        '8-15': { name: '中秋节', desc: '三秋恰半，花好月圆，阖家团聚吃月饼' },
+        '9-9': { name: '重阳节', desc: '九九归真，登高赏菊，敬老感恩' },
+        '10-1': { name: '寒衣节', desc: '十月初一祭祖，送寒衣，缅怀先人' },
+        '10-15': { name: '下元节', desc: '消灾祈福，水官解厄' },
+        '12-8': { name: '腊八节', desc: '喝腊八粥，泡腊八蒜，年味渐浓' },
+        '12-23': { name: '北方小年', desc: '祭灶神、扫尘土，小年纳福' },
+        '12-24': { name: '南方小年', desc: '辞旧迎新，祭灶王' }
+      };
+      if (cnLunarFestivals[lMD]) {
+        list.push({ ...cnLunarFestivals[lMD], type: 'cn', tag: '传统节日' });
+      }
+
+      // 除夕（岁末最后一天）
+      if (lunar.lunarMonth === 12) {
+        const nextDayLunar = solarToLunar(y, m, d + 1);
+        if (nextDayLunar.lunarMonth === 1 && nextDayLunar.lunarDay === 1) {
+          list.push({ name: '除夕', desc: '岁末大夜，阖家守岁，围炉迎春', type: 'cn', tag: '传统节日' });
+        }
+      }
+    }
+
+    // 4. 二十四节气
+    const term = getSolarTerm(y, m, d);
+    if (term) {
+      list.push({ name: term, desc: '二十四节气之一 · ' + term, type: 'term', tag: '节气' });
+    }
+
+    return list;
+  }
+
+  // =========================================================
+  // 2. 闹钟核心逻辑与法定节假日集合
+  // =========================================================
   const HOLIDAYS_SET = new Set([
     '2026-01-01', '2026-01-02', '2026-01-03',
     '2026-02-15', '2026-02-16', '2026-02-17', '2026-02-18', '2026-02-19', '2026-02-20', '2026-02-21', '2026-02-22',
@@ -509,7 +1146,7 @@
     const wd = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
     const isWeekend = wd === 0 || wd === 6;
     if (mode === 'standard') return !isWeekend;
-    const key = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const key = y + '-' + String(m).padStart(2, '0') + '-' + String(d).padStart(2, '0');
     if (MAKEUP_WORKDAYS_SET.has(key)) return true;
     if (HOLIDAYS_SET.has(key)) return false;
     return !isWeekend;
@@ -582,12 +1219,12 @@
       },
       {
         id: '3',
-        label: '结婚纪念日',
+        label: '中秋团圆日',
         enabled: true,
         fireAt: new Date().setHours(9, 0, 0, 0),
         freq: 'year',
-        byMonth: [5],
-        byMonthday: [20],
+        byMonth: [9],
+        byMonthday: [25],
         vibrate: true
       },
       {
@@ -614,7 +1251,7 @@
   let activeWorkdayMode = 'china';
   let activeWeekdays = [1, 2, 3, 4, 5];
 
-  // --- 原生桥接注册 ---
+  // --- 原生桥接 ---
   function syncNativeAlarm(alarm) {
     if (window.AndroidAlarm) {
       if (alarm.enabled) {
@@ -634,7 +1271,7 @@
     }
   }
 
-  // --- 音效发生器与停止处理 ---
+  // --- 音效与停止处理 ---
   let audioCtx = null;
   let audioTimer = null;
   function playRingtone() {
@@ -669,7 +1306,308 @@
     }
   }
 
-  // --- UI 初始化与渲染 ---
+  // =========================================================
+  // 3. Tab 切换与页面控制
+  // =========================================================
+  let currentTab = 'alarm';
+
+  function switchTab(tab) {
+    currentTab = tab;
+    document.getElementById('tabAlarm').className = 'nav-item ' + (tab === 'alarm' ? 'active' : '');
+    document.getElementById('tabCalendar').className = 'nav-item ' + (tab === 'calendar' ? 'active' : '');
+
+    if (tab === 'alarm') {
+      document.getElementById('viewList').style.display = 'flex';
+      document.getElementById('viewCalendar').style.display = 'none';
+      renderList();
+    } else {
+      document.getElementById('viewList').style.display = 'none';
+      document.getElementById('viewCalendar').style.display = 'flex';
+      renderCalendar();
+    }
+  }
+
+  // =========================================================
+  // 4. 日历模块业务逻辑与渲染
+  // =========================================================
+  let currentCalYear = new Date().getFullYear();
+  let currentCalMonth = new Date().getMonth() + 1; // 1 - 12
+  let selectedDate = {
+    year: new Date().getFullYear(),
+    month: new Date().getMonth() + 1,
+    day: new Date().getDate()
+  };
+
+  function navMonth(dir) {
+    currentCalMonth += dir;
+    if (currentCalMonth < 1) {
+      currentCalMonth = 12;
+      currentCalYear--;
+    } else if (currentCalMonth > 12) {
+      currentCalMonth = 1;
+      currentCalYear++;
+    }
+    renderCalendar();
+  }
+
+  function jumpToToday() {
+    const now = new Date();
+    currentCalYear = now.getFullYear();
+    currentCalMonth = now.getMonth() + 1;
+    selectedDate = {
+      year: now.getFullYear(),
+      month: now.getMonth() + 1,
+      day: now.getDate()
+    };
+    renderCalendar();
+  }
+
+  function selectCalendarDate(y, m, d) {
+    selectedDate = { year: y, month: m, day: d };
+    if (m !== currentCalMonth || y !== currentCalYear) {
+      currentCalYear = y;
+      currentCalMonth = m;
+    }
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    document.getElementById('calYearMonthText').innerText = currentCalYear + '年 ' + currentCalMonth + '月';
+    
+    // 计算天干地支年份概要
+    const midLunar = solarToLunar(currentCalYear, currentCalMonth, 15);
+    document.getElementById('calGanzhiYear').innerText = midLunar.gzYear + '【' + midLunar.animal + '年】';
+
+    // 统计当月法定休假与补班天数
+    let restCount = 0;
+    let workCount = 0;
+    const daysInMonth = new Date(currentCalYear, currentCalMonth, 0).getDate();
+    for (let d = 1; d <= daysInMonth; d++) {
+      const key = currentCalYear + '-' + String(currentCalMonth).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+      if (HOLIDAYS_SET.has(key)) restCount++;
+      if (MAKEUP_WORKDAYS_SET.has(key)) workCount++;
+    }
+    document.getElementById('calRestCount').innerText = '休 ' + restCount + '天';
+    document.getElementById('calWorkCount').innerText = '班 ' + workCount + '天';
+
+    // 获取当月1号星期与总天数
+    const firstDayOfWeek = new Date(currentCalYear, currentCalMonth - 1, 1).getDay(); // 0 是周日
+    const prevMonthDays = new Date(currentCalYear, currentCalMonth - 1, 0).getDate();
+
+    const grid = document.getElementById('calGridContainer');
+    let cellsHtml = '';
+
+    const now = new Date();
+    const isCurrentRealMonth = (now.getFullYear() === currentCalYear && now.getMonth() + 1 === currentCalMonth);
+    const todayNum = isCurrentRealMonth ? now.getDate() : -1;
+
+    // 42 单元格网格生成
+    for (let i = 0; i < 42; i++) {
+      let cellYear = currentCalYear;
+      let cellMonth = currentCalMonth;
+      let cellDay = 0;
+      let isOtherMonth = false;
+
+      if (i < firstDayOfWeek) {
+        // 上个月补充天数
+        isOtherMonth = true;
+        cellDay = prevMonthDays - (firstDayOfWeek - 1 - i);
+        cellMonth = currentCalMonth - 1;
+        if (cellMonth < 1) { cellMonth = 12; cellYear--; }
+      } else if (i >= firstDayOfWeek + daysInMonth) {
+        // 下个月补充天数
+        isOtherMonth = true;
+        cellDay = i - (firstDayOfWeek + daysInMonth) + 1;
+        cellMonth = currentCalMonth + 1;
+        if (cellMonth > 12) { cellMonth = 1; cellYear++; }
+      } else {
+        // 当月天数
+        cellDay = i - firstDayOfWeek + 1;
+      }
+
+      const lunar = solarToLunar(cellYear, cellMonth, cellDay);
+      const fests = getAllFestivals(cellYear, cellMonth, cellDay, lunar);
+      const dateKey = cellYear + '-' + String(cellMonth).padStart(2, '0') + '-' + String(cellDay).padStart(2, '0');
+      const isHoli = HOLIDAYS_SET.has(dateKey);
+      const isMakeup = MAKEUP_WORKDAYS_SET.has(dateKey);
+
+      // 显示文本：优先显示节日名，否则显示农历初几
+      let labelText = lunar.dayStr;
+      let labelClass = '';
+
+      if (lunar.lunarDay === 1) {
+        labelText = lunar.monthStr;
+        labelClass = 'is-term';
+      }
+      
+      const termFest = fests.find(f => f.type === 'term');
+      const cnFest = fests.find(f => f.type === 'cn');
+      const intlFest = fests.find(f => f.type === 'intl');
+
+      if (cnFest) {
+        labelText = cnFest.name;
+        labelClass = 'is-fest';
+      } else if (termFest) {
+        labelText = termFest.name;
+        labelClass = 'is-term';
+      } else if (intlFest) {
+        labelText = intlFest.name;
+        labelClass = 'is-intl';
+      }
+
+      // 是否为今天 / 选中
+      const isToday = (cellYear === now.getFullYear() && cellMonth === now.getMonth() + 1 && cellDay === todayNum);
+      const isSelected = (cellYear === selectedDate.year && cellMonth === selectedDate.month && cellDay === selectedDate.day);
+      const dayOfWeek = (i % 7);
+      const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+
+      // 角标
+      let badgeHtml = '';
+      if (isHoli) {
+        badgeHtml = '<span class="cal-badge badge-xiu">休</span>';
+      } else if (isMakeup) {
+        badgeHtml = '<span class="cal-badge badge-ban">班</span>';
+      }
+
+      // 闹钟点检查（如果有闹钟会在当天响）
+      let hasAlarmToday = false;
+      const dayTimestamp = new Date(cellYear, cellMonth - 1, cellDay, 12, 0, 0).getTime();
+      for (const a of alarms) {
+        if (!a.enabled) continue;
+        if (a.freq === 'workday' && isWorkday(cellYear, cellMonth, cellDay, a.workdayMode)) { hasAlarmToday = true; break; }
+        if (a.freq === 'weekend' && !isWorkday(cellYear, cellMonth, cellDay, a.workdayMode)) { hasAlarmToday = true; break; }
+        if (a.freq === 'day') { hasAlarmToday = true; break; }
+        if (a.freq === 'week' && (a.byWeekday || []).includes(dayOfWeek)) { hasAlarmToday = true; break; }
+        if (a.freq === 'month' && (a.byMonthday || []).includes(cellDay)) { hasAlarmToday = true; break; }
+        if (a.freq === 'year' && (a.byMonth || []).includes(cellMonth) && (a.byMonthday || []).includes(cellDay)) { hasAlarmToday = true; break; }
+      }
+
+      cellsHtml += `
+        <div class="cal-cell ${isOtherMonth ? 'other-month' : ''} ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}" 
+             onclick="selectCalendarDate(${cellYear}, ${cellMonth}, ${cellDay})">
+          ${badgeHtml}
+          <div class="cal-day-num ${isWeekend && !isSelected ? 'weekend-day' : ''}">${cellDay}</div>
+          <div class="cal-lunar-txt ${labelClass}">${labelText}</div>
+          ${hasAlarmToday ? '<span class="badge-dot-alarm"></span>' : ''}
+        </div>
+      `;
+    }
+    grid.innerHTML = cellsHtml;
+
+    // 渲染选中日期的详情卡片
+    renderDateDetailCard();
+  }
+
+  function renderDateDetailCard() {
+    const { year: y, month: m, day: d } = selectedDate;
+    const lunar = solarToLunar(y, m, d);
+    const fests = getAllFestivals(y, m, d, lunar);
+    const dateKey = y + '-' + String(m).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    const isHoli = HOLIDAYS_SET.has(dateKey);
+    const isMakeup = MAKEUP_WORKDAYS_SET.has(dateKey);
+
+    const weekName = '星期' + WEEK_NAMES[new Date(y, m - 1, d).getDay()];
+    document.getElementById('calDetailDate').innerText = y + '年' + m + '月' + d + '日 ' + weekName;
+    document.getElementById('calDetailLunar').innerText = '农历 ' + lunar.fullLunarStr;
+
+    // 状态胶囊
+    const statusPill = document.getElementById('calDetailStatusPill');
+    if (isHoli) {
+      statusPill.className = 'cal-detail-status-pill pill-rest';
+      statusPill.innerText = '🔴 法定放假';
+    } else if (isMakeup) {
+      statusPill.className = 'cal-detail-status-pill pill-work';
+      statusPill.innerText = '💼 调休补班';
+    } else {
+      const isWd = isWorkday(y, m, d, 'china');
+      if (isWd) {
+        statusPill.className = 'cal-detail-status-pill';
+        statusPill.style.background = '#e0f2fe';
+        statusPill.style.color = '#0284c7';
+        statusPill.innerText = '💼 正常工作日';
+      } else {
+        statusPill.className = 'cal-detail-status-pill';
+        statusPill.style.background = '#fef3c7';
+        statusPill.style.color = '#b45309';
+        statusPill.innerText = '🌴 普通周末双休';
+      }
+    }
+
+    // 节日列表
+    const festContainer = document.getElementById('calDetailFestivals');
+    if (fests.length > 0) {
+      festContainer.innerHTML = fests.map(f => {
+        let badgeClass = 'cal-fest-cn';
+        if (f.type === 'intl') badgeClass = 'cal-fest-intl';
+        else if (f.type === 'term') badgeClass = 'cal-fest-term';
+
+        return `
+          <div class="cal-festival-item">
+            <span class="cal-fest-badge ${badgeClass}">${f.tag}</span>
+            <span class="cal-fest-title">${f.name}</span>
+            <span class="cal-fest-sub">${f.desc}</span>
+          </div>
+        `;
+      }).join('');
+      festContainer.style.display = 'flex';
+    } else {
+      festContainer.innerHTML = `
+        <div class="cal-festival-item" style="color:#64748b;">
+          <span>今日无特殊节假日，平安顺遂！🍃</span>
+        </div>
+      `;
+      festContainer.style.display = 'flex';
+    }
+
+    // 闹钟检查
+    const dayOfWeek = new Date(y, m - 1, d).getDay();
+    const activeAlarmsToday = alarms.filter(a => {
+      if (!a.enabled) return false;
+      if (a.freq === 'workday') return isWorkday(y, m, d, a.workdayMode);
+      if (a.freq === 'weekend') return !isWorkday(y, m, d, a.workdayMode);
+      if (a.freq === 'day') return true;
+      if (a.freq === 'week') return (a.byWeekday || []).includes(dayOfWeek);
+      if (a.freq === 'month') return (a.byMonthday || []).includes(d);
+      if (a.freq === 'year') return (a.byMonth || []).includes(m) && (a.byMonthday || []).includes(d);
+      return false;
+    });
+
+    const hintBox = document.getElementById('calAlarmHintBox');
+    if (activeAlarmsToday.length > 0) {
+      hintBox.style.display = 'flex';
+      const desc = activeAlarmsToday.map(a => {
+        const dt = new Date(a.fireAt);
+        const t = String(dt.getHours()).padStart(2, '0') + ':' + String(dt.getMinutes()).padStart(2, '0');
+        return a.label + ' (' + t + ')';
+      }).join('、');
+      document.getElementById('calAlarmHintText').innerText = '今日设定响铃：' + desc;
+    } else {
+      hintBox.style.display = 'none';
+    }
+  }
+
+  // 从日历快捷创建某天的专属闹钟
+  function createAlarmForSelectedDate() {
+    const { year, month, day } = selectedDate;
+    const lunar = solarToLunar(year, month, day);
+    const fests = getAllFestivals(year, month, day, lunar);
+    let defaultLabel = month + '月' + day + '日 事项提醒';
+    if (fests.length > 0) {
+      defaultLabel = fests[0].name + '提醒';
+    }
+
+    openEditor(null);
+    document.getElementById('editLabel').value = defaultLabel;
+    
+    // 自动选择每年或单次模式
+    selectFreq('year');
+    document.getElementById('editYearMonthSelect').value = month;
+    document.getElementById('editYearDaySelect').value = day;
+  }
+
+  // =========================================================
+  // 5. 闹钟页面渲染与编辑器交互
+  // =========================================================
   const FREQS = [
     { key: 'once', label: '单次' },
     { key: 'workday', label: '工作日' },
@@ -773,6 +1711,7 @@
       syncNativeAlarm(a);
       persistAlarms();
       renderList();
+      if (currentTab === 'calendar') renderCalendar();
     }
   }
 
@@ -810,12 +1749,19 @@
     renderWeekdays();
 
     document.getElementById('viewList').style.display = 'none';
+    document.getElementById('viewCalendar').style.display = 'none';
     document.getElementById('viewEditor').style.display = 'flex';
+    document.getElementById('bottomNav').style.display = 'none';
   }
 
   function closeEditor() {
     document.getElementById('viewEditor').style.display = 'none';
-    document.getElementById('viewList').style.display = 'flex';
+    document.getElementById('bottomNav').style.display = 'flex';
+    if (currentTab === 'alarm') {
+      document.getElementById('viewList').style.display = 'flex';
+    } else {
+      document.getElementById('viewCalendar').style.display = 'flex';
+    }
   }
 
   function renderFreqChips() {
@@ -902,6 +1848,7 @@
     persistAlarms();
     closeEditor();
     renderList();
+    if (currentTab === 'calendar') renderCalendar();
   }
 
   function ring(alarm) {
@@ -910,16 +1857,19 @@
     document.getElementById('ringTime').innerText = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
     document.getElementById('ringLabel').innerText = alarm.label;
     document.getElementById('viewRing').style.display = 'flex';
+    document.getElementById('bottomNav').style.display = 'none';
   }
 
   function dismissAlarm() {
     stopRingtone();
     document.getElementById('viewRing').style.display = 'none';
+    document.getElementById('bottomNav').style.display = 'flex';
   }
 
   function snoozeAlarm() {
     stopRingtone();
     document.getElementById('viewRing').style.display = 'none';
+    document.getElementById('bottomNav').style.display = 'flex';
     setTimeout(() => {
       ring({ label: '贪睡提醒', fireAt: Date.now() });
     }, 5000);
@@ -934,6 +1884,7 @@
         (data.holidays || []).forEach(h => HOLIDAYS_SET.add(h));
         (data.makeupWorkdays || []).forEach(w => MAKEUP_WORKDAYS_SET.add(w));
         renderList();
+        if (currentTab === 'calendar') renderCalendar();
       }
     } catch(e) {}
   }
@@ -953,6 +1904,7 @@
 
   initTimeOptions();
   renderList();
+  renderCalendar();
   silentSyncHolidays();
 
   // 向原生层初始化所有闹钟
