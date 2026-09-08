@@ -80,6 +80,10 @@ jobs:
           cp ios/WatermelonAlarm/alarm.wav build/Payload/WatermelonAlarm.app/default.wav
           cp preview/index.html build/Payload/WatermelonAlarm.app/
 
+      - name: 对 App Bundle 进行基础代码签名预处理 (Ad-hoc Codesign)
+        run: |
+          codesign --force --deep --sign - build/Payload/WatermelonAlarm.app
+
       - name: 打包生成标准的 .ipa 文件
         run: |
           cd build
