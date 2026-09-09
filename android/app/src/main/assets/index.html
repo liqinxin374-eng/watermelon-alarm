@@ -447,44 +447,121 @@
     }
     .cal-title-wrap {
       display: flex;
-      align-items: baseline;
-      gap: 10px;
+      flex-direction: column;
+      gap: 4px;
     }
-    .cal-year-month {
-      font-size: 26px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      color: var(--text);
-    }
-    .cal-lunar-summary {
-      font-size: 13px;
-      color: var(--sub);
-      font-weight: 700;
-    }
-    .cal-nav-btns {
+    .cal-picker-row {
       display: flex;
       align-items: center;
       gap: 6px;
     }
+    .cal-select-box {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 5px 22px 5px 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .cal-select-box:hover, .cal-select-box:active {
+      border-color: var(--primary);
+      background: #eff6ff;
+    }
+    .cal-header-select {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--text);
+      background: transparent;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      line-height: 1.2;
+    }
+    .cal-select-arrow {
+      position: absolute;
+      right: 7px;
+      pointer-events: none;
+      font-size: 11px;
+      color: var(--sub);
+      font-weight: 900;
+    }
+    .cal-header-select option {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      background: #fff;
+    }
+    .cal-lunar-summary {
+      font-size: 12px;
+      color: var(--sub);
+      font-weight: 700;
+      padding-left: 2px;
+    }
+    .cal-nav-btns {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
     .cal-btn {
       background: #fff;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 7px 12px;
-      font-size: 13px;
+      border-radius: 10px;
+      padding: 6px 10px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--text);
       cursor: pointer;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
       display: flex;
       align-items: center;
       justify-content: center;
+      white-space: nowrap;
     }
     .cal-btn:active { background: #f1f5f9; }
     .cal-btn-today {
       background: #eff6ff;
       border-color: #bfdbfe;
       color: var(--primary);
+      font-weight: 800;
+    }
+
+    /* 快捷年份滑动胶囊栏 */
+    .cal-quick-years-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 2px 2px 6px;
+      scrollbar-width: none;
+    }
+    .cal-quick-years-bar::-webkit-scrollbar { display: none; }
+    .year-chip {
+      flex-shrink: 0;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .year-chip:active { transform: scale(0.95); }
+    .year-chip.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.25);
     }
 
     /* 节假日概览横幅 */
@@ -733,18 +810,32 @@
   <!-- 视图2：万年历与节假日 -->
   <div id="viewCalendar" class="view-content" style="display: none;">
     <div class="calendar-view">
-      <!-- 顶部月份导航栏 -->
+      <!-- 顶部年份与月份导航栏 -->
       <div class="cal-header-bar">
         <div class="cal-title-wrap">
-          <div class="cal-year-month" id="calYearMonthText">2026年 9月</div>
+          <div class="cal-picker-row">
+            <div class="cal-select-box" title="点击切换任意年份">
+              <select id="calYearSelect" class="cal-header-select" onchange="onCalSelectChange()"></select>
+              <span class="cal-select-arrow">▾</span>
+            </div>
+            <div class="cal-select-box" title="点击切换月份">
+              <select id="calMonthSelect" class="cal-header-select" onchange="onCalSelectChange()"></select>
+              <span class="cal-select-arrow">▾</span>
+            </div>
+          </div>
           <div class="cal-lunar-summary" id="calGanzhiYear">丙午马年</div>
         </div>
         <div class="cal-nav-btns">
-          <button type="button" class="cal-btn" onclick="navMonth(-1)">◀</button>
+          <button type="button" class="cal-btn" onclick="navYear(-1)" title="上一年">«年</button>
+          <button type="button" class="cal-btn" onclick="navMonth(-1)" title="上一月">◀月</button>
           <button type="button" class="cal-btn cal-btn-today" onclick="jumpToToday()">今天</button>
-          <button type="button" class="cal-btn" onclick="navMonth(1)">▶</button>
+          <button type="button" class="cal-btn" onclick="navMonth(1)" title="下一月">月▶</button>
+          <button type="button" class="cal-btn" onclick="navYear(1)" title="下一年">年»</button>
         </div>
       </div>
+
+      <!-- 快速年份单触切换胶囊栏 -->
+      <div class="cal-quick-years-bar" id="calQuickYearsBar"></div>
 
       <!-- 节假日速览横幅 -->
       <div class="cal-overview-banner">
@@ -1350,6 +1441,61 @@
     renderCalendar();
   }
 
+  function navYear(dir) {
+    currentCalYear += dir;
+    if (currentCalYear < 1920) currentCalYear = 1920;
+    if (currentCalYear > 2049) currentCalYear = 2049;
+    renderCalendar();
+  }
+
+  function onCalSelectChange() {
+    const y = parseInt(document.getElementById('calYearSelect').value, 10);
+    const m = parseInt(document.getElementById('calMonthSelect').value, 10);
+    currentCalYear = y;
+    currentCalMonth = m;
+    renderCalendar();
+  }
+
+  function selectQuickYear(y) {
+    currentCalYear = y;
+    renderCalendar();
+  }
+
+  function initCalendarOptions() {
+    const ySelect = document.getElementById('calYearSelect');
+    if (!ySelect) return;
+    let yOptions = '';
+    for (let y = 1920; y <= 2049; y++) {
+      yOptions += '<option value="' + y + '">' + y + '年</option>';
+    }
+    ySelect.innerHTML = yOptions;
+
+    const mSelect = document.getElementById('calMonthSelect');
+    if (!mSelect) return;
+    let mOptions = '';
+    for (let m = 1; m <= 12; m++) {
+      mOptions += '<option value="' + m + '">' + m + '月</option>';
+    }
+    mSelect.innerHTML = mOptions;
+  }
+
+  function renderQuickYearsBar() {
+    const bar = document.getElementById('calQuickYearsBar');
+    if (!bar) return;
+    const nowY = new Date().getFullYear();
+    const years = [2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2032, 2035];
+    if (!years.includes(currentCalYear)) {
+      years.push(currentCalYear);
+      years.sort((a, b) => a - b);
+    }
+    bar.innerHTML = years.map(y => {
+      const isCur = (y === currentCalYear);
+      const isNow = (y === nowY);
+      const label = y + '年' + (isNow ? '·今' : '');
+      return '<button type="button" class="year-chip ' + (isCur ? 'active' : '') + '" onclick="selectQuickYear(' + y + ')">' + label + '</button>';
+    }).join('');
+  }
+
   function jumpToToday() {
     const now = new Date();
     currentCalYear = now.getFullYear();
@@ -1372,7 +1518,15 @@
   }
 
   function renderCalendar() {
-    document.getElementById('calYearMonthText').innerText = currentCalYear + '年 ' + currentCalMonth + '月';
+    const ySelect = document.getElementById('calYearSelect');
+    if (ySelect && parseInt(ySelect.value, 10) !== currentCalYear) {
+      ySelect.value = currentCalYear;
+    }
+    const mSelect = document.getElementById('calMonthSelect');
+    if (mSelect && parseInt(mSelect.value, 10) !== currentCalMonth) {
+      mSelect.value = currentCalMonth;
+    }
+    renderQuickYearsBar();
     
     // 计算天干地支年份概要
     const midLunar = solarToLunar(currentCalYear, currentCalMonth, 15);
@@ -1903,6 +2057,7 @@
   }, 1000);
 
   initTimeOptions();
+  initCalendarOptions();
   renderList();
   renderCalendar();
   silentSyncHolidays();
